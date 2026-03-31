@@ -1,0 +1,47 @@
+{% extends 'articles/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>Добро пожаловать в Wiki IThub SPB!</h1>
+        <p class="lead">База знаний для студентов и преподавателей колледжа</p>
+        
+        <h3 class="mt-4">Последние статьи</h3>
+        {% for article in recent_articles %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+                    </h5>
+                    <p class="card-text">{{ article.content|truncatewords:50 }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Автор: {{ article.author.username }} | 
+                            Дата: {{ article.created_at|date:"d.m.Y" }}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Пока нет опубликованных статей</p>
+        {% endfor %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Категории</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for category in categories %}
+                        <li><a href="#">{{ category.name }}</a></li>
+                    {% empty %}
+                        <li>Нет категорий</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
