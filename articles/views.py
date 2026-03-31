@@ -31,7 +31,7 @@ def article_list(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "articles/article_list.html", {"articles": page_obj})
+    return render(request, "articles/articlelist.html", {"articles": page_obj})
 
 
 def article_detail(request, pk):

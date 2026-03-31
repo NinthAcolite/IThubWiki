@@ -1,5 +1,4 @@
 {% extends 'articles/base.html' %}
-{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="row">
@@ -13,23 +12,23 @@
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label for="id_username" class="form-label">Имя пользователя</label>
+                        <label for="id_username" class="form-label">Имя пользователя *</label>
                         <input type="text" name="username" class="form-control" id="id_username" required>
                         <small class="text-muted">Обязательное поле. Не более 150 символов.</small>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="id_email" class="form-label">Email</label>
+                        <label for="id_email" class="form-label">Email *</label>
                         <input type="email" name="email" class="form-control" id="id_email" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="id_password" class="form-label">Пароль</label>
+                        <label for="id_password" class="form-label">Пароль *</label>
                         <input type="password" name="password" class="form-control" id="id_password" required>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="id_password_confirm" class="form-label">Подтверждение пароля</label>
+                        <label for="id_password_confirm" class="form-label">Подтверждение пароля *</label>
                         <input type="password" name="password_confirm" class="form-control" id="id_password_confirm" required>
                     </div>
                     

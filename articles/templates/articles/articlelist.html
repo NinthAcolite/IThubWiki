@@ -2,74 +2,45 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1><i class="fas fa-book"></i> Все статьи</h1>
-            {% if user.is_authenticated %}
-                <a href="/create/" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Создать статью
-                </a>
-            {% endif %}
-        </div>
+    <div class="col-lg-8 mx-auto">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><a href="/articles/">Статьи</a></li>
+                <li class="breadcrumb-item active">{{ article.title|truncatechars:50 }}</li>
+            </ol>
+        </nav>
         
-        {% if articles %}
-            {% for article in articles %}
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a href="/article/{{ article.id }}/" class="text-decoration-none">
-                                {{ article.title }}
-                            </a>
-                        </h5>
-                        <p class="card-text">{{ article.content|truncatewords:50|safe }}</p>
-                        <div class="text-muted small">
-                            <i class="fas fa-user"></i> {{ article.author.username }} |
-                            <i class="fas fa-calendar"></i> {{ article.created_at|date:"d.m.Y" }} |
-                            <i class="fas fa-eye"></i> {{ article.views_count }} просмотров
-                            {% if article.category %}
-                                | <i class="fas fa-tag"></i> {{ article.category.name }}
-                            {% endif %}
-                        </div>
-                    </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title">{{ article.title }}</h1>
+                
+                <div class="text-muted mb-4 pb-2 border-bottom">
+                    <i class="fas fa-user"></i> {{ article.author.username }} |
+                    <i class="fas fa-calendar"></i> {{ article.created_at|date:"d.m.Y H:i" }} |
+                    <i class="fas fa-eye"></i> {{ article.views_count }} просмотров
+                    {% if article.category %}
+                        | <i class="fas fa-tag"></i> {{ article.category.name }}
+                    {% endif %}
                 </div>
-            {% endfor %}
-            
-            <!-- Пагинация -->
-            {% if articles.has_other_pages %}
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        {% if articles.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ articles.previous_page_number }}">«</a>
-                            </li>
-                        {% endif %}
-                        
-                        {% for num in articles.paginator.page_range %}
-                            {% if articles.number == num %}
-                                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                            {% elif num > articles.number|add:'-3' and num < articles.number|add:'3' %}
-                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% if articles.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ articles.next_page_number }}">»</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% endif %}
-        {% else %}
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> Статей пока нет. 
-                {% if user.is_authenticated %}
-                    <a href="/create/">Создайте первую статью!</a>
-                {% else %}
-                    <a href="/login/">Войдите</a>, чтобы создать статью.
+                
+                <div class="article-content" style="line-height: 1.8; font-size: 1.1rem;">
+                    {{ article.content|linebreaks|safe }}
+                </div>
+                
+                {% if article.updated_at != article.created_at %}
+                    <div class="alert alert-info mt-4">
+                        <small><i class="fas fa-edit"></i> Последнее обновление: {{ article.updated_at|date:"d.m.Y H:i" }}</small>
+                    </div>
                 {% endif %}
             </div>
-        {% endif %}
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="/articles/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> К списку статей
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends 'articles/base.html' %}
-{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="row">
@@ -19,7 +18,7 @@
                     {% csrf_token %}
                     
                     <div class="mb-3">
-                        <label for="id_title" class="form-label">Заголовок статьи</label>
+                        <label for="id_title" class="form-label">Заголовок статьи *</label>
                         <input type="text" name="title" class="form-control" id="id_title" required>
                     </div>
                     
@@ -34,8 +33,9 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="id_content" class="form-label">Содержание</label>
+                        <label for="id_content" class="form-label">Содержание *</label>
                         <textarea name="content" class="form-control" id="id_content" rows="15" required></textarea>
+                        <small class="text-muted">Поддерживается форматирование текста.</small>
                     </div>
                     
                     <div class="mt-4">
