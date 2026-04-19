@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -11,44 +12,37 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'articles:home' %}">IThub SPB Wiki</a>
+            <a class="navbar-brand fw-bold" href="{% url 'articles:home' %}">IThub SPB Wiki</a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'articles:home' %}">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'articles:article_list' %}">Статьи</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'articles:home' %}">Главная</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'articles:article_list' %}">Статьи</a></li>
+                    
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'articles:create_article' %}">Создать статью</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'articles:create_article' %}">Создать статью</a></li>
                         {% if user.is_staff %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'articles:moderation_queue' %}">Модерация</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'articles:moderation_queue' %}">Модерация</a></li>
                         {% endif %}
                     {% endif %}
                 </ul>
+
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link text-white">Привет, {{ user.username }}</span>
+                        <li class="nav-item navbar-text me-3">
+                            <strong>{{ user.username }}</strong>
+                            {% if user.is_staff %}<span class="badge bg-warning ms-1">Модератор</span>{% endif %}
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'articles:logout' %}">Выйти</a>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'articles:login' %}">Войти</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'articles:register' %}">Регистрация</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'articles:login' %}">Войти</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'articles:register' %}">Регистрация</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -58,7 +52,7 @@
     <div class="container mt-4">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>

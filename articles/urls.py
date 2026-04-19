@@ -7,6 +7,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("articles/", views.article_list, name="article_list"),
     path("article/<int:pk>/", views.article_detail, name="article_detail"),
+    path("article/<int:pk>/edit/", views.edit_article, name="edit_article"),  # ← новое
     path("create/", views.create_article, name="create_article"),
     path("moderation/", views.moderation_queue, name="moderation_queue"),
     path("register/", views.register, name="register"),

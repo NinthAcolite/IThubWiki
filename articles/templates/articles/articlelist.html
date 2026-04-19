@@ -1,5 +1,15 @@
 {% extends 'articles/base.html' %} {% block content %}
 {% load wiki_links %}
+<div class="mb-4">
+    <h5>Фильтр по разделам:</h5>
+    <a href="{% url 'articles:article_list' %}" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">Все</a>
+    {% for cat in categories %}
+        <a href="?category={{ cat.id }}" 
+           class="btn btn-sm {% if selected_category == cat.id %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            {{ cat.name }}
+        </a>
+    {% endfor %}
+</div>
 <div class="row">
   <div class="col-12">
     <div class="d-flex justify-content-between align-items-center mb-4">

@@ -1,0 +1,26 @@
+{% extends 'articles/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning">
+                <h4>Редактирование статьи: {{ article.title }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success btn-lg mt-3">
+                        Сохранить и отправить на модерацию
+                    </button>
+                    <a href="{% url 'articles:article_detail' article.pk %}" class="btn btn-secondary mt-3">
+                        Отмена
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

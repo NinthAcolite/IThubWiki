@@ -3,8 +3,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.core.paginator import Paginator
+
 from .models import Article, Category, ArticleImage
 from .forms import ArticleForm, ModerationForm, RegistrationForm, ArticleImageForm
+
 from django.contrib.auth.models import User
 
 
@@ -15,23 +17,38 @@ def is_moderator(user):
 def home(request):
     published_articles = Article.objects.filter(status="published")[:5]
     categories = Category.objects.all()
-    total_articles = Article.objects.filter(status="published").count()
 
-    context = {
-        "recent_articles": published_articles,
-        "categories": categories,
-        "total_articles": total_articles,
-    }
-    return render(request, "articles/home.html", context)
+    return render(
+        request,
+        "articles/home.html",
+        {
+            "recent_articles": published_articles,
+            "categories": categories,
+        },
+    )
 
 
 def article_list(request):
     articles = Article.objects.filter(status="published")
-    paginator = Paginator(articles, 10)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
 
-    return render(request, "articles/articlelist.html", {"articles": page_obj})
+    category_id = request.GET.get("category")
+    if category_id:
+        articles = articles.filter(category_id=category_id)
+
+    paginator = Paginator(articles, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    categories = Category.objects.all()
+
+    return render(
+        request,
+        "articles/articlelist.html",
+        {
+            "articles": page_obj,
+            "categories": categories,
+            "selected_category": int(category_id) if category_id else None,
+        },
+    )
 
 
 def article_detail(request, pk):
@@ -44,7 +61,6 @@ def article_detail(request, pk):
 def create_article(request):
     if request.method == "POST":
         form = ArticleForm(request.POST)
-        image_form = ArticleImageForm(request.POST, request.FILES)
 
         if form.is_valid():
             article = form.save(commit=False)
@@ -66,7 +82,6 @@ def create_article(request):
             messages.error(request, "Пожалуйста, исправьте ошибки в форме")
     else:
         form = ArticleForm()
-        image_form = ArticleImageForm()
 
     categories = Category.objects.all()
     return render(
@@ -75,8 +90,32 @@ def create_article(request):
         {
             "form": form,
             "categories": categories,
-            # "image_form": image_form,
         },
+    )
+
+
+@login_required
+def edit_article(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+
+    if request.method == "POST":
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.status = "pending"
+            article.moderator = None
+            article.moderation_comment = ""
+            article.save()
+
+            messages.success(
+                request, "Статья отредактирована и отправлена на повторную модерацию."
+            )
+            return redirect("articles:article_detail", pk=article.pk)
+    else:
+        form = ArticleForm(instance=article)
+
+    return render(
+        request, "articles/editarticle.html", {"form": form, "article": article}
     )
 
 
@@ -99,24 +138,31 @@ def moderation_queue(request):
                 article.moderator = request.user
                 article.save()
                 messages.success(
-                    request, f'Статья "{article.title}" одобрена и опубликована'
+                    request, f'Статья "{article.title}" одобрена и опубликована.'
                 )
             else:
                 article.reject(comment)
                 article.moderator = request.user
                 article.save()
-                messages.success(request, f'Статья "{article.title}" отклонена')
+                messages.success(
+                    request,
+                    f'Статья "{article.title}" отклонена. Причина отправлена автору.',
+                )
 
             return redirect("articles:moderation_queue")
         else:
-            messages.error(request, "Пожалуйста, заполните форму корректно")
+            messages.error(request, "Ошибка в форме модерации.")
+
     else:
         form = ModerationForm()
 
     return render(
         request,
         "articles/moderationqueue.html",
-        {"articles": pending_articles, "form": form},
+        {
+            "articles": pending_articles,
+            "form": form,
+        },
     )
 
 
@@ -127,18 +173,14 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data["username"]
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password"]
-
-            user = User.objects.create_user(username, email, password)
-            login(request, user)
-            messages.success(
-                request, f"Добро пожаловать, {username}! Регистрация успешно завершена."
+            user = User.objects.create_user(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password"],
             )
+            login(request, user)
+            messages.success(request, f"Добро пожаловать, {user.username}!")
             return redirect("articles:home")
-        else:
-            messages.error(request, "Пожалуйста, исправьте ошибки в форме")
     else:
         form = RegistrationForm()
 
@@ -154,18 +196,17 @@ def user_login(request):
         password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
-            messages.success(request, f"С возвращением, {username}!")
-            next_url = request.GET.get("next", "articles:home")
-            return redirect(next_url)
+            messages.success(request, f"С возвращением, {user.username}!")
+            return redirect("articles:home")
         else:
-            messages.error(request, "Неверное имя пользователя или пароль")
+            messages.error(request, "Неверное имя пользователя или пароль.")
 
     return render(request, "articles/registration/login.html")
 
 
 def user_logout(request):
     logout(request)
-    messages.info(request, "Вы успешно вышли из системы")
+    messages.info(request, "Вы успешно вышли из системы.")
     return redirect("articles:home")
