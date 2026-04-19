@@ -76,3 +76,21 @@ class Article(models.Model):
     def increment_views(self):
         self.views_count += 1
         self.save(update_fields=["views_count"])
+
+class ArticleImage(models.Model):
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE, related_name="images", verbose_name="Статья"
+    )
+    image = models.ImageField(
+        upload_to="articles/images/%Y/%m/%d/", verbose_name="Изображение"
+    )
+    caption = models.CharField(max_length=200, blank=True, verbose_name="Подпись")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Изображение статьи"
+        verbose_name_plural = "Изображения статей"
+        ordering = ["-uploaded_at"]
+
+    def __str__(self):
+        return f"Изображение для {self.article.title}"

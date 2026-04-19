@@ -84,6 +84,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+if DEBUG:
+    import os
+    from django.conf.urls.static import static
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

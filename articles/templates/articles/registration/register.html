@@ -1,52 +1,31 @@
 {% extends 'articles/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 mx-auto">
+<div class="row justify-content-center">
+    <div class="col-md-6">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="fas fa-user-plus"></i> Регистрация</h4>
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Регистрация в Wiki IThub SPB</h4>
             </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="id_username" class="form-label">Имя пользователя *</label>
-                        <input type="text" name="username" class="form-control" id="id_username" required>
-                        <small class="text-muted">Обязательное поле. Не более 150 символов.</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_email" class="form-label">Email *</label>
-                        <input type="email" name="email" class="form-control" id="id_email" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Пароль *</label>
-                        <input type="password" name="password" class="form-control" id="id_password" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_password_confirm" class="form-label">Подтверждение пароля *</label>
-                        <input type="password" name="password_confirm" class="form-control" id="id_password_confirm" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-check"></i> Зарегистрироваться
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                        Зарегистрироваться
                     </button>
                 </form>
                 
-                <hr>
-                
-                <div class="text-center">
-                    <p class="mb-0">Уже есть аккаунт? <a href="/login/">Войдите</a></p>
+                <div class="text-center mt-4">
+                    Уже есть аккаунт? 
+                    <a href="{% url 'articles:login' %}" class="text-decoration-none">Войти</a>
                 </div>
             </div>
         </div>
         
-        <div class="alert alert-info mt-3">
-            <i class="fas fa-info-circle"></i> Регистрируясь, вы соглашаетесь с правилами использования Wiki.
+        <div class="text-center mt-3 text-muted small">
+            Регистрируясь, вы соглашаетесь с правилами использования Wiki.
         </div>
     </div>
 </div>

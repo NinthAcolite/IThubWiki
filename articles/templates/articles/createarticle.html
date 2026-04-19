@@ -1,68 +1,52 @@
 {% extends 'articles/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-8 mx-auto">
+<div class="row justify-content-center">
+    <div class="col-lg-9">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="fas fa-plus-circle"></i> Создание новой статьи</h4>
+                <h4>Создание новой статьи</h4>
             </div>
             <div class="card-body">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> 
-                    <strong>Важно!</strong> После отправки статья будет направлена на модерацию. 
-                    Администратор проверит содержание и опубликует её.
-                </div>
-                
-                <form method="post">
+
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
+
+                    <!-- Основные поля статьи -->
+                    {{ form|crispy }}
+
+                    <hr class="my-4">
+
+                    <!-- Загрузка изображений -->
+                    <h5>📸 Загрузка изображений</h5>
                     <div class="mb-3">
-                        <label for="id_title" class="form-label">Заголовок статьи *</label>
-                        <input type="text" name="title" class="form-control" id="id_title" required>
+                        <input type="file" 
+                               name="image" 
+                               multiple 
+                               accept="image/jpeg, image/jpg, image/png, image/gif, image/webp"
+                               class="form-control">
+                        <small class="text-muted">
+                            Поддерживаемые форматы: <strong>JPG, JPEG, PNG, GIF, WEBP</strong><br>
+                            Можно выбрать несколько файлов сразу
+                        </small>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_category" class="form-label">Категория</label>
-                        <select name="category" class="form-control" id="id_category">
-                            <option value="">---------</option>
-                            {% for category in categories %}
-                                <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_content" class="form-label">Содержание *</label>
-                        <textarea name="content" class="form-control" id="id_content" rows="15" required></textarea>
-                        <small class="text-muted">Поддерживается форматирование текста.</small>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Отправить на модерацию
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'articles:home' %}" class="btn btn-secondary me-md-2">Отмена</a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Отправить статью на модерацию
                         </button>
-                        <a href="/" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Отмена
-                        </a>
                     </div>
                 </form>
+
             </div>
         </div>
-        
-        <div class="card mt-4 shadow-sm">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Советы по написанию статьи</h5>
-            </div>
-            <div class="card-body">
-                <ul class="mb-0">
-                    <li>Используйте понятные заголовки и структуру</li>
-                    <li>Разбивайте текст на абзацы для лучшей читаемости</li>
-                    <li>Добавляйте примеры кода, если это уместно</li>
-                    <li>Проверяйте орфографию перед отправкой</li>
-                    <li>Указывайте источники информации</li>
-                </ul>
-            </div>
+
+        <div class="mt-4 text-muted small">
+            <strong>Как вставлять изображения в статью:</strong><br>
+            После публикации используй разметку:<br>
+            <code>[[image:название_файла.png]]</code> или <code>[[image:фото.jpg]]</code>
         </div>
     </div>
 </div>

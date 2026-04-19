@@ -3,8 +3,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.core.paginator import Paginator
-from .models import Article, Category
-from .forms import ArticleForm, ModerationForm, RegistrationForm
+from .models import Article, Category, ArticleImage
+from .forms import ArticleForm, ModerationForm, RegistrationForm, ArticleImageForm
 from django.contrib.auth.models import User
 
 
@@ -37,18 +37,27 @@ def article_list(request):
 def article_detail(request, pk):
     article = get_object_or_404(Article, pk=pk, status="published")
     article.increment_views()
-    return render(request, "articles/article_detail.html", {"article": article})
+    return render(request, "articles/articledetail.html", {"article": article})
 
 
 @login_required
 def create_article(request):
     if request.method == "POST":
         form = ArticleForm(request.POST)
+        image_form = ArticleImageForm(request.POST, request.FILES)
+
         if form.is_valid():
             article = form.save(commit=False)
             article.author = request.user
             article.status = "pending"
             article.save()
+
+            files = request.FILES.getlist("image")
+            for f in files:
+                ArticleImage.objects.create(
+                    article=article, image=f, caption=request.POST.get("caption", "")
+                )
+
             messages.success(
                 request, f'Статья "{article.title}" успешно отправлена на модерацию!'
             )
@@ -57,12 +66,17 @@ def create_article(request):
             messages.error(request, "Пожалуйста, исправьте ошибки в форме")
     else:
         form = ArticleForm()
+        image_form = ArticleImageForm()
 
     categories = Category.objects.all()
     return render(
         request,
-        "articles/create_article.html",
-        {"form": form, "categories": categories},
+        "articles/createarticle.html",
+        {
+            "form": form,
+            "categories": categories,
+            # "image_form": image_form,
+        },
     )
 
 
@@ -101,7 +115,7 @@ def moderation_queue(request):
 
     return render(
         request,
-        "articles/moderation_queue.html",
+        "articles/moderationqueue.html",
         {"articles": pending_articles, "form": form},
     )
 

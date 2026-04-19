@@ -2,7 +2,34 @@ from django import forms
 from .models import Article, Category
 
 
+from django import forms
+from .models import Article, ArticleImage
+
+
 class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ["title", "content", "category"]
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "form-control"}),
+            "content": forms.Textarea(attrs={"class": "form-control", "rows": 15}),
+            "category": forms.Select(attrs={"class": "form-control"}),
+        }
+
+
+class ArticleImageForm(forms.ModelForm):
+    class Meta:
+        model = ArticleImage
+        fields = ["image", "caption"]
+        widgets = {
+            "caption": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Подпись к изображению (необязательно)",
+                }
+            ),
+        }
+
     class Meta:
         model = Article
         fields = ["title", "content", "category"]
