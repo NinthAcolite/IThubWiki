@@ -19,8 +19,7 @@
         </h5>
         <p>{{ article.content|wikilinks|truncatewords:80|safe }}</p>
         <small class="text-muted">
-          Автор: {{ article.author.username }} | {{
-          article.published_at|date:"d.m.Y"|default:article.created_at|date:"d.m.Y" }}
+          Автор: {{ article.author.username }} | {{ article.published_at|date:"d.m.Y H:i"|default:article.created_at|date:"d.m.Y H:i" }}
         </small>
       </div>
     </div>

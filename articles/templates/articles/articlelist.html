@@ -40,7 +40,7 @@
           {{ article.content|wikilinks|truncatewords:80|safe }}
         </p>
         <small class="text-muted">
-          {{ article.author.username }} | {{ article.published_at|date:"d.m.Y"|default:article.created_at|date:"d.m.Y" }}
+          {{ article.author.username }} | {{ article.published_at|date:"d.m.Y H:i"|default:article.created_at|date:"d.m.Y H:i" }}
           | {{ article.views_count }} просмотров {% if article.category %} | {{
           article.category.name }}{% endif %}
         </small>

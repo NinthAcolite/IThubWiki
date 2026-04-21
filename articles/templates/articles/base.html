@@ -25,6 +25,9 @@
                     
                     {% if user.is_authenticated %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'articles:create_article' %}">Создать статью</a></li>
+                        <li class="nav-item">
+                        <li class="nav-item">
+                        <a class="nav-link" href="{% url 'articles:notifications' %}">Уведомления</a></li>
                         {% if user.is_staff %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'articles:moderation_queue' %}">Модерация</a></li>
                         {% endif %}

@@ -70,9 +70,12 @@ def create_article(request):
 
             files = request.FILES.getlist("image")
             for f in files:
-                ArticleImage.objects.create(
-                    article=article, image=f, caption=request.POST.get("caption", "")
-                )
+                if f:
+                    ArticleImage.objects.create(
+                        article=article,
+                        image=f,
+                        caption=request.POST.get("caption", ""),
+                    )
 
             messages.success(
                 request, f'Статья "{article.title}" успешно отправлена на модерацию!'
@@ -83,16 +86,14 @@ def create_article(request):
     else:
         form = ArticleForm()
 
-    categories = Category.objects.all()
     return render(
         request,
         "articles/createarticle.html",
         {
             "form": form,
-            "categories": categories,
+            "categories": Category.objects.all(),
         },
     )
-
 
 @login_required
 def edit_article(request, pk):
@@ -108,7 +109,8 @@ def edit_article(request, pk):
             article.save()
 
             messages.success(
-                request, "Статья отредактирована и отправлена на повторную модерацию."
+                request,
+                "Статья успешно отредактирована и отправлена на повторную модерацию.",
             )
             return redirect("articles:article_detail", pk=article.pk)
     else:
@@ -210,3 +212,13 @@ def user_logout(request):
     logout(request)
     messages.info(request, "Вы успешно вышли из системы.")
     return redirect("articles:home")
+
+
+@login_required
+def user_notifications(request):
+    user_articles = Article.objects.filter(author=request.user).order_by("-created_at")
+
+    context = {
+        "user_articles": user_articles,
+    }
+    return render(request, "articles/notifications.html", context)

@@ -9,44 +9,24 @@
                 <h4>Создание новой статьи</h4>
             </div>
             <div class="card-body">
-
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-
-                    <!-- Основные поля статьи -->
                     {{ form|crispy }}
 
-                    <hr class="my-4">
-
-                    <!-- Загрузка изображений -->
-                    <h5>📸 Загрузка изображений</h5>
-                    <div class="mb-3">
-                        <input type="file" 
-                               name="image" 
-                               multiple 
-                               accept="image/jpeg, image/jpg, image/png, image/gif, image/webp"
-                               class="form-control">
-                        <small class="text-muted">
-                            Поддерживаемые форматы: <strong>JPG, JPEG, PNG, GIF, WEBP</strong><br>
-                            Можно выбрать несколько файлов сразу
-                        </small>
-                    </div>
+                    <hr>
+                    <h5>Загрузка изображений</h5>
+                    <input type="file" name="image" multiple accept="image/*" class="form-control mb-2">
+                    <small class="text-muted">
+                        Поддерживаемые форматы: JPG, JPEG, PNG, GIF, WEBP<br>
+                        Можно выбрать несколько файлов
+                    </small>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="{% url 'articles:home' %}" class="btn btn-secondary me-md-2">Отмена</a>
-                        <button type="submit" class="btn btn-success btn-lg">
-                            Отправить статью на модерацию
-                        </button>
+                        <a href="{% url 'articles:home' %}" class="btn btn-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-success btn-lg">Отправить на модерацию</button>
                     </div>
                 </form>
-
             </div>
-        </div>
-
-        <div class="mt-4 text-muted small">
-            <strong>Как вставлять изображения в статью:</strong><br>
-            После публикации используй разметку:<br>
-            <code>[[image:название_файла.png]]</code> или <code>[[image:фото.jpg]]</code>
         </div>
     </div>
 </div>

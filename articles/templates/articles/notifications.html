@@ -1,0 +1,62 @@
+{% extends 'articles/base.html' %}
+{% load wiki_links %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h2 class="mb-4">Мои уведомления</h2>
+
+        {% if user_articles %}
+            <div class="list-group">
+                {% for article in user_articles %}
+                <div class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{% url 'articles:article_detail' article.pk %}" class="text-decoration-none">
+                                {{ article.title }}
+                            </a>
+                        </h5>
+                        <small class="text-muted">{{ article.published_at|date:"d.m.Y H:i"|default:article.created_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+
+                    <p class="mb-2">
+                        <span class="badge 
+                            {% if article.status == 'published' %}bg-success
+                            {% elif article.status == 'rejected' %}bg-danger
+                            {% elif article.status == 'pending' %}bg-warning
+                            {% else %}bg-secondary{% endif %}">
+                            {{ article.get_status_display }}
+                        </span>
+                    </p>
+
+                    {% if article.status == 'rejected' and article.moderation_comment %}
+                    <div class="alert alert-danger py-2">
+                        <strong>Причина отклонения:</strong><br>
+                        {{ article.moderation_comment }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-2">
+                        {% if article.status == 'rejected' or article.status == 'published' %}
+                            <a href="{% url 'articles:edit_article' article.pk %}" class="btn btn-sm btn-warning">
+                                Редактировать
+                            </a>
+                        {% endif %}
+                        
+                        {% if article.status == 'published' %}
+                            <a href="{% url 'articles:article_detail' article.pk %}" class="btn btn-sm btn-success">
+                                Посмотреть
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                У вас пока нет статей.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
