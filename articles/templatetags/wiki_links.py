@@ -32,7 +32,7 @@ def wikilinks(value):
         try:
             article = Article.objects.get(title__iexact=text, status="published")
             url = f"/article/{article.pk}/"
-            return f'<a href="{url}" class="wiki-link">{text}</a>'
+            return f'<a href="{url}" class="wiki-link" style="color: #007bff; font-weight: 500;">{text}</a>'
         except Article.DoesNotExist:
             return f'<span style="color:#999; text-decoration: underline dashed;">{text}</span>'
 

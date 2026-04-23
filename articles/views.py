@@ -80,9 +80,9 @@ def create_article(request):
             messages.success(
                 request, f'Статья "{article.title}" успешно отправлена на модерацию!'
             )
-            return redirect("articles:home")
-        else:
-            messages.error(request, "Пожалуйста, исправьте ошибки в форме")
+            return redirect(
+                "articles:article_detail", pk=article.pk
+            )
     else:
         form = ArticleForm()
 
@@ -112,7 +112,7 @@ def edit_article(request, pk):
                 request,
                 "Статья успешно отредактирована и отправлена на повторную модерацию.",
             )
-            return redirect("articles:article_detail", pk=article.pk)
+            return redirect("articles:home.html", pk=article.pk)
     else:
         form = ArticleForm(instance=article)
 
